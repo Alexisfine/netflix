@@ -15,7 +15,7 @@ import java.util.Date;
 public abstract class AbstractEntity {
     @Id
     @GeneratedValue(generator = "ksuid")
-    @GenericGenerator(name="ksuid", strategy = "com.alex.api.utils.KsuidIdentiferGenerator")
+    @GenericGenerator(name="ksuid", strategy = "com.alex.utils.KsuidIdentiferGenerator")
     private String id;
 
     @CreationTimestamp

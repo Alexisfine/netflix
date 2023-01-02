@@ -4,6 +4,7 @@ import com.alex.enums.Gender;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.util.Date;
 import java.util.List;
 
 @Entity(name = "User")
@@ -27,7 +28,7 @@ public class User extends AbstractEntity{
     @Column(nullable = false)
     private String password;
 
-    @ManyToMany(cascade = {}, fetch = FetchType.LAZY)
+    @ManyToMany(cascade = {}, fetch = FetchType.EAGER)
     @JoinTable(
             name = "user_role",
             joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
@@ -36,5 +37,18 @@ public class User extends AbstractEntity{
 
     @Enumerated(EnumType.STRING)
     private Gender gender;
+
+    @Column(nullable = false)
+    private Boolean locked = false;
+
+    @Column(nullable = true)
+    private Boolean enabled = true;
+
+    private String lastLoginIp;
+
+    @Column(columnDefinition = "TIMESTAMP WITHOUT TIME ZONE")
+    private Date lastLoginTime;
+
+    private String profilePic;
 
 }
