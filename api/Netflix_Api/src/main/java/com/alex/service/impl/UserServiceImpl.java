@@ -2,6 +2,7 @@ package com.alex.service.impl;
 
 import com.alex.dto.UserDto;
 import com.alex.dto.UserRegisterDto;
+import com.alex.exception.BizException;
 import com.alex.mapper.UserMapper;
 import com.alex.model.User;
 import com.alex.repository.UserDao;
@@ -13,6 +14,9 @@ import javax.swing.text.html.Option;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
+import static com.alex.exception.ExceptionType.EMAIL_DUPLICATE;
+import static com.alex.exception.ExceptionType.USERNAME_DUPLICATE;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -45,11 +49,11 @@ public class UserServiceImpl implements UserService {
     private void checkUsernameAndEmail(String username, String email) {
         Optional<User> user = userDao.getByUsername(username);
         if (user.isPresent()) {
-            throw new RuntimeException("");
+            throw new BizException(USERNAME_DUPLICATE);
         }
         Optional<User> user1 = userDao.getByEmail(email);
         if (user1.isPresent()) {
-            throw new RuntimeException("");
+            throw new BizException(EMAIL_DUPLICATE);
         }
     }
 }
