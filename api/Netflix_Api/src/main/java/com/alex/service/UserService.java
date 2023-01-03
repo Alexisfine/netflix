@@ -1,9 +1,6 @@
 package com.alex.service;
 
-import com.alex.dto.UserDto;
-import com.alex.dto.UserLoginDto;
-import com.alex.dto.UserRegisterDto;
-import com.alex.dto.UserUpdateDto;
+import com.alex.dto.*;
 import com.alex.model.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -31,4 +28,8 @@ public interface UserService  extends UserDetailsService {
     User loadUserByUsername(String username) throws UsernameNotFoundException;
 
     Page<UserDto> search(Pageable pageable);
+
+    String createToken(TokenCreateDto tokenCreateDto);
+
+    UserDto getCurrentUser();
 }

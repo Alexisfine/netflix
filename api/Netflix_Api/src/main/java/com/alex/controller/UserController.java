@@ -59,6 +59,12 @@ public class UserController {
         return userMapper.toVo(userService.updateUser(id, userUpdateDto));
     }
 
+    @GetMapping("/me")
+    UserVo me() {
+        System.out.println(userService.getCurrentUser());
+        return userMapper.toVo(userService.getCurrentUser());
+    }
+
     @DeleteMapping("/{id}")
     void deleteUser(@PathVariable String id) {
         userService.deleteUser(id);

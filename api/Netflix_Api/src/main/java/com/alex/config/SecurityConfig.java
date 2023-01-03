@@ -1,12 +1,12 @@
 package com.alex.config;
 
 import com.alex.exception.RestAuthenticationEntryPoint;
-import com.alex.filter.JwtAuthenticationFilter;
 import com.alex.filter.JwtAuthorizationFilter;
 import com.alex.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -26,7 +26,7 @@ public class SecurityConfig {
     public static final String HEADER_STRING = "Authorization";
     public static final String SIGN_UP_URL = "/api/users";
 
-    public static final String LOGIN_URL = "/login";
+    public static final String TOKEN_URL = "/api/tokens";
 
     private UserService userService;
     private RestAuthenticationEntryPoint restAuthenticationEntryPoint;
@@ -47,9 +47,10 @@ public class SecurityConfig {
                 .exceptionHandling().authenticationEntryPoint(restAuthenticationEntryPoint)
                 .and()
                 .authorizeHttpRequests()
+                //.requestMatchers(HttpMethod.POST, SIGN_UP_URL).permitAll()
+                .requestMatchers(HttpMethod.POST, TOKEN_URL).permitAll()
                 .anyRequest().authenticated()
                 .and()
-                .addFilter(new JwtAuthenticationFilter(authenticationManager(http.getSharedObject(AuthenticationConfiguration.class))))
                 .addFilter(new JwtAuthorizationFilter(authenticationManager(http.getSharedObject(AuthenticationConfiguration.class))))
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()

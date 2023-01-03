@@ -1,27 +1,34 @@
 package com.alex.service.impl;
 
-import com.alex.dto.UserDto;
-import com.alex.dto.UserLoginDto;
-import com.alex.dto.UserRegisterDto;
-import com.alex.dto.UserUpdateDto;
+import com.alex.dto.*;
 import com.alex.exception.BizException;
 import com.alex.mapper.UserMapper;
 import com.alex.model.User;
 import com.alex.repository.UserDao;
 import com.alex.service.UserService;
 import com.alex.utils.UpdateColumnUtils;
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.algorithms.Algorithm;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static com.alex.config.SecurityConfig.*;
+import static com.alex.config.SecurityConfig.TOKEN_PREFIX;
 import static com.alex.exception.ExceptionType.*;
 
 @Service
@@ -90,7 +97,6 @@ public class UserServiceImpl implements UserService {
     }
 
 
-
     @Override
     public void deleteUser(String id) {
         User user = getUserPrivate(id);
@@ -100,6 +106,35 @@ public class UserServiceImpl implements UserService {
     @Override
     public Page<UserDto> search(Pageable pageable) {
         return userDao.findAll(pageable).map(user -> userMapper.toDto(user));
+    }
+
+    @Override
+    public String createToken(TokenCreateDto tokenCreateDto) {
+        User user = loadUserByUsername(tokenCreateDto.getUsername());
+        if (!passwordEncoder.matches(tokenCreateDto.getPassword(), user.getPassword())) {
+            throw new BizException(USER_PASSWORD_NOT_MATCH);
+        }
+
+        if (!user.isEnabled()) {
+            throw new BizException(USER_NOT_ENABLED);
+        }
+
+        if (!user.isAccountNonLocked()) {
+            throw new BizException(USER_LOCKED);
+        }
+
+        return JWT
+                .create()
+                .withSubject(user.getUsername())
+                .withExpiresAt(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
+                .sign(Algorithm.HMAC512(SECRET.getBytes()));
+    }
+
+    @Override
+    public UserDto getCurrentUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User user = loadUserByUsername(authentication.getName());
+        return userMapper.toDto(user);
     }
 
     @Override
