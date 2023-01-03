@@ -54,6 +54,7 @@ public class User extends AbstractEntity implements UserDetails {
 
     private String profilePic;
 
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return null;

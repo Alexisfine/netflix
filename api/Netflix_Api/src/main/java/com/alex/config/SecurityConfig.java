@@ -7,29 +7,34 @@ import com.alex.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-
-import static com.alex.config.SecurityConstants.SIGN_UP_URL;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
+    public static final String SECRET = "secret";
+    public static final String ACCESS_TOKEN = "access_token";
+    public static final String REFRESH_TOKEN = "refresh_token";
 
+    public static final Long EXPIRATION_TIME = 864000000L;
+    public static final String TOKEN_PREFIX = "Bearer ";
+    public static final String HEADER_STRING = "Authorization";
+    public static final String SIGN_UP_URL = "/api/users";
 
-    private final RestAuthenticationEntryPoint restAuthenticationEntryPoint;
-    private UserService userDetailsService;
+    public static final String LOGIN_URL = "/login";
+
+    private UserService userService;
+    private RestAuthenticationEntryPoint restAuthenticationEntryPoint;
 
     @Autowired
-    public SecurityConfig(RestAuthenticationEntryPoint restAuthenticationEntryPoint, UserService userService) {
+    public SecurityConfig(UserService userService, RestAuthenticationEntryPoint restAuthenticationEntryPoint) {
+        this.userService = userService;
         this.restAuthenticationEntryPoint = restAuthenticationEntryPoint;
-        this.userDetailsService = userService;
     }
 
     @Bean
@@ -38,25 +43,21 @@ public class SecurityConfig {
                 .cors()
                 .and()
                 .csrf().disable()
-                .userDetailsService(userDetailsService)
-                .authorizeHttpRequests()
-                .requestMatchers(HttpMethod.POST, SIGN_UP_URL).permitAll()
-                .anyRequest()
-                .authenticated()
+                .userDetailsService(userService)
+                .exceptionHandling().authenticationEntryPoint(restAuthenticationEntryPoint)
                 .and()
-                .addFilter(
-                        new JwtAuthenticationFilter(
-                                authenticationManager(
-                                        http.getSharedObject(AuthenticationConfiguration.class))))
-                .addFilter(
-                        new JwtAuthorizationFilter(
-                                authenticationManager(
-                                        http.getSharedObject(AuthenticationConfiguration.class)
-                                )
-                        ))
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+                .authorizeHttpRequests()
+                .anyRequest().authenticated()
+                .and()
+                .addFilter(new JwtAuthenticationFilter(authenticationManager(http.getSharedObject(AuthenticationConfiguration.class))))
+                .addFilter(new JwtAuthorizationFilter(authenticationManager(http.getSharedObject(AuthenticationConfiguration.class))))
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .and()
+                .httpBasic();
+
         return http.build();
-}
+    }
+
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
         return authenticationConfiguration.getAuthenticationManager();

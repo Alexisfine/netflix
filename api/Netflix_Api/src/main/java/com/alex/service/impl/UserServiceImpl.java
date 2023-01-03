@@ -1,20 +1,23 @@
 package com.alex.service.impl;
 
 import com.alex.dto.UserDto;
+import com.alex.dto.UserLoginDto;
 import com.alex.dto.UserRegisterDto;
+import com.alex.dto.UserUpdateDto;
 import com.alex.exception.BizException;
 import com.alex.mapper.UserMapper;
 import com.alex.model.User;
 import com.alex.repository.UserDao;
 import com.alex.service.UserService;
+import com.alex.utils.UpdateColumnUtils;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
-import javax.swing.text.html.Option;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -30,22 +33,26 @@ public class UserServiceImpl implements UserService {
     private PasswordEncoder passwordEncoder;
 
     @Autowired
-    public UserServiceImpl(UserDao userDao, UserMapper userMapper, PasswordEncoder passwordEncoder) {
+    public UserServiceImpl(
+            UserDao userDao,
+            UserMapper userMapper,
+            PasswordEncoder passwordEncoder
+            //AuthenticationManager authenticationManager
+            ) {
         this.userDao = userDao;
         this.userMapper = userMapper;
         this.passwordEncoder = passwordEncoder;
+        //this.authenticationManager = authenticationManager;
     }
 
     @Override
     public User loadUserByUsername(String username) throws UsernameNotFoundException {
-        log.info("begin finding user with username {}", username);
         User user = userDao
                 .getByUsername(username)
                 .orElseThrow(() -> new BizException(USER_NOT_FOUND));
-        log.info("user is found in the db");
+
         return user;
     }
-
 
     @Override
     public List<UserDto> getAll() {
@@ -58,11 +65,46 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto addUser(UserRegisterDto userRegisterDto) {
+        log.info("Begin adding user");
         checkUsernameAndEmail(userRegisterDto.getUsername(), userRegisterDto.getEmail());
         User user = userMapper.createEntity(userRegisterDto);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         User savedUser = userDao.save(user);
-        return userMapper.toDto(savedUser);
+        log.info("user {} added", savedUser);
+        UserDto userDto = userMapper.toDto(savedUser);
+        System.out.println(userDto);
+        return userDto;
+    }
+
+    @Override
+    public UserDto getUser(String id) {
+        User user = getUserPrivate(id);
+        return userMapper.toDto(user);
+    }
+
+    @Override
+    public UserDto updateUser(String id, UserUpdateDto userUpdateDto) {
+        User user = getUserPrivate(id);
+        BeanUtils.copyProperties(userUpdateDto, user, UpdateColumnUtils.getNullPropertyNames(userUpdateDto));
+        return userMapper.toDto(userDao.save(user));
+    }
+
+
+
+    @Override
+    public void deleteUser(String id) {
+        User user = getUserPrivate(id);
+        userDao.delete(user);
+    }
+
+    @Override
+    public Page<UserDto> search(Pageable pageable) {
+        return userDao.findAll(pageable).map(user -> userMapper.toDto(user));
+    }
+
+    @Override
+    public String login(UserLoginDto userLoginDto) {
+        return null;
     }
 
     private void checkUsernameAndEmail(String username, String email) {
@@ -74,6 +116,11 @@ public class UserServiceImpl implements UserService {
         if (user1.isPresent()) {
             throw new BizException(EMAIL_DUPLICATE);
         }
+    }
+
+    private User getUserPrivate(String id) {
+        User user = userDao.findById(id).orElseThrow(() -> new BizException(USER_NOT_FOUND));
+        return user;
     }
 
 }
