@@ -4,11 +4,10 @@ import com.alex.enums.Gender;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 @Entity(name = "User")
 @Table(
@@ -52,12 +51,16 @@ public class User extends AbstractEntity implements UserDetails {
     @Column(columnDefinition = "TIMESTAMP WITHOUT TIME ZONE")
     private Date lastLoginTime;
 
-    private String profilePic;
+    private String profilePic; // S3 key
 
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return null;
+        List<GrantedAuthority> authorities = new ArrayList<>();
+        for (Role role: roles) {
+            authorities.add(new SimpleGrantedAuthority(role.getName()));
+        }
+        return authorities;
     }
 
     @Override
@@ -79,4 +82,5 @@ public class User extends AbstractEntity implements UserDetails {
     public boolean isEnabled() {
         return getEnabled();
     }
+
 }

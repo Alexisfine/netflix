@@ -5,3 +5,5 @@ create table role (
     created_time timestamp without time zone not null,
     updated_time timestamp without time zone not null
 )
+
+insert into role ()

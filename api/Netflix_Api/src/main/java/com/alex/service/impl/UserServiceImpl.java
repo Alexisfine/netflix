@@ -3,10 +3,18 @@ package com.alex.service.impl;
 import com.alex.dto.*;
 import com.alex.exception.BizException;
 import com.alex.mapper.UserMapper;
+import com.alex.model.Role;
 import com.alex.model.User;
+import com.alex.repository.RoleDao;
 import com.alex.repository.UserDao;
 import com.alex.service.UserService;
+import com.alex.upload.BucketName;
 import com.alex.utils.UpdateColumnUtils;
+import com.amazonaws.AmazonServiceException;
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.model.ObjectMetadata;
+import com.amazonaws.services.s3.model.S3Object;
+import com.amazonaws.util.IOUtils;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import lombok.extern.slf4j.Slf4j;
@@ -14,22 +22,20 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.*;
 import java.util.stream.Collectors;
-
 import static com.alex.config.SecurityConfig.*;
-import static com.alex.config.SecurityConfig.TOKEN_PREFIX;
 import static com.alex.exception.ExceptionType.*;
+import static org.apache.http.entity.ContentType.*;
 
 @Service
 @Slf4j
@@ -39,16 +45,24 @@ public class UserServiceImpl implements UserService {
 
     private PasswordEncoder passwordEncoder;
 
+    private RoleDao roleDao;
+
+    private AmazonS3 amazonS3;
+
     @Autowired
     public UserServiceImpl(
             UserDao userDao,
             UserMapper userMapper,
-            PasswordEncoder passwordEncoder
+            PasswordEncoder passwordEncoder,
+            RoleDao roleDao,
+            AmazonS3 amazonS3
             //AuthenticationManager authenticationManager
             ) {
         this.userDao = userDao;
         this.userMapper = userMapper;
         this.passwordEncoder = passwordEncoder;
+        this.roleDao = roleDao;
+        this.amazonS3 = amazonS3;
         //this.authenticationManager = authenticationManager;
     }
 
@@ -76,6 +90,8 @@ public class UserServiceImpl implements UserService {
         checkUsernameAndEmail(userRegisterDto.getUsername(), userRegisterDto.getEmail());
         User user = userMapper.createEntity(userRegisterDto);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
+        Role role = roleDao.findByName("ROLE_USER").get();
+        user.setRoles(List.of(role));
         User savedUser = userDao.save(user);
         log.info("user {} added", savedUser);
         UserDto userDto = userMapper.toDto(savedUser);
@@ -138,6 +154,46 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public void uploadProfileImg(String id, MultipartFile file) {
+        // Check is image is empty
+        if (file.isEmpty()) throw new BizException(FILE_NOT_FOUND);
+        // Check if file is an image
+        if (!Arrays.asList(IMAGE_JPEG.getMimeType(), IMAGE_PNG.getMimeType(), IMAGE_GIF.getMimeType()).contains(file.getContentType())) {
+            throw new BizException(ILLEGAL_FILE_TYPE);
+        }
+        // Check if the user exists
+        User user = getUserPrivate(id);
+        System.out.println(id);
+        System.out.println(user);
+
+        // Grab  metadata from file
+        Map<String, String> metaData = new HashMap<>();
+        metaData.put("Content-Type",file.getContentType());
+        metaData.put("Content-Length", String.valueOf(file.getSize()));
+
+        // Store image in s3 and upload db
+        String path = String.format("%s/%s", BucketName.PROFILE_IMAGE.getBucketName(), user.getId());
+        String fileName = String.format("%s-%s", file.getOriginalFilename(), UUID.randomUUID());
+        try {
+            save(path,fileName, Optional.of(metaData), file.getInputStream());
+            user.setProfilePic(fileName);
+            userDao.save(user);
+        } catch (Exception ex) {
+            throw new BizException(UNABLE_TO_WRITE_FILE);
+        }
+    }
+
+    @Override
+    public byte[] downloadProfileImg(String id) {
+        User user = getUserPrivate(id);
+        String path = String.format("%s/%s",
+                BucketName.PROFILE_IMAGE.getBucketName(),
+                user.getId());
+
+        return download(path, user.getProfilePic());
+    }
+
+    @Override
     public String login(UserLoginDto userLoginDto) {
         return null;
     }
@@ -158,4 +214,31 @@ public class UserServiceImpl implements UserService {
         return user;
     }
 
+    private void save(
+            String path,
+            String fileName,
+            Optional<Map<String, String>> optionalMetaData,
+            InputStream inputStream) {
+
+        ObjectMetadata metaData = new ObjectMetadata();
+        optionalMetaData.ifPresent(map -> {
+            if (!map.isEmpty()) {
+                map.forEach((key,value) -> metaData.addUserMetadata(key, value));
+            }
+        });
+        try {
+            amazonS3.putObject(path, fileName, inputStream, metaData);
+        } catch (AmazonServiceException ex) {
+            throw new IllegalStateException("Failed to store file to S3", ex);
+        }
+    }
+
+    private byte[] download(String path, String key) {
+        try {
+            S3Object object = amazonS3.getObject(path, key);
+            return IOUtils.toByteArray(object.getObjectContent());
+        } catch (AmazonServiceException | IOException ex ) {
+            throw new BizException(FAILED_TO_DOWNLOAD);
+        }
+    }
 }

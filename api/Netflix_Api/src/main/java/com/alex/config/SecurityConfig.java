@@ -9,6 +9,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -16,6 +17,10 @@ import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity(
+        jsr250Enabled = true,
+        securedEnabled = true
+)
 public class SecurityConfig {
     public static final String SECRET = "secret";
     public static final String ACCESS_TOKEN = "access_token";
@@ -47,14 +52,13 @@ public class SecurityConfig {
                 .exceptionHandling().authenticationEntryPoint(restAuthenticationEntryPoint)
                 .and()
                 .authorizeHttpRequests()
-                //.requestMatchers(HttpMethod.POST, SIGN_UP_URL).permitAll()
+                .requestMatchers(HttpMethod.POST, SIGN_UP_URL).permitAll()
                 .requestMatchers(HttpMethod.POST, TOKEN_URL).permitAll()
-                .anyRequest().authenticated()
+                .anyRequest().permitAll()
                 .and()
-                .addFilter(new JwtAuthorizationFilter(authenticationManager(http.getSharedObject(AuthenticationConfiguration.class))))
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                .and()
-                .httpBasic();
+                .addFilter(new JwtAuthorizationFilter(
+                        authenticationManager(http.getSharedObject(AuthenticationConfiguration.class)), userService))
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
         return http.build();
     }

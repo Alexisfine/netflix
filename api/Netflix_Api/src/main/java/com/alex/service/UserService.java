@@ -7,6 +7,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Arrays;
 import java.util.List;
@@ -32,4 +33,8 @@ public interface UserService  extends UserDetailsService {
     String createToken(TokenCreateDto tokenCreateDto);
 
     UserDto getCurrentUser();
+
+    void uploadProfileImg(String id, MultipartFile file);
+
+    byte[] downloadProfileImg(String id);
 }

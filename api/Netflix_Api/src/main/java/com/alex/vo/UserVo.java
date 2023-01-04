@@ -15,5 +15,6 @@ public class UserVo {
     private Gender gender;
     private Boolean locked;
     private Boolean enabled;
+    private String profilePic;
 
 }
