@@ -28,7 +28,6 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
@@ -163,8 +162,6 @@ public class UserServiceImpl implements UserService {
         }
         // Check if the user exists
         User user = getUserPrivate(id);
-        System.out.println(id);
-        System.out.println(user);
 
         // Grab  metadata from file
         Map<String, String> metaData = new HashMap<>();

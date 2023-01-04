@@ -54,7 +54,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests()
                 .requestMatchers(HttpMethod.POST, SIGN_UP_URL).permitAll()
                 .requestMatchers(HttpMethod.POST, TOKEN_URL).permitAll()
-                .anyRequest().permitAll()
+                .anyRequest().authenticated()
                 .and()
                 .addFilter(new JwtAuthorizationFilter(
                         authenticationManager(http.getSharedObject(AuthenticationConfiguration.class)), userService))

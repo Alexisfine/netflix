@@ -1,22 +1,17 @@
-package com.alex.model;
+package com.alex.dto;
 
 import com.alex.enums.MovieStatus;
-import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
-@Entity
-@Table(name = "movie")
-@Data
-public class Movie extends AbstractEntity{
+import java.util.Date;
 
-    @Column(nullable = false)
+@Data
+public class MovieCreateDto {
+    @NotBlank(message = "Movie title can't be blank")
     private String title;
 
     private String description;
-
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private MovieStatus movieStatus = MovieStatus.DRAFT;
 
     private String image;
 
@@ -30,9 +25,10 @@ public class Movie extends AbstractEntity{
 
     private String year;
 
-    private String lim;
+    private String limit;
 
     private String genre;
 
     private boolean isSeries;
+
 }

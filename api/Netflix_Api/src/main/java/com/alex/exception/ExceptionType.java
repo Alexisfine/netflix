@@ -13,8 +13,8 @@ public enum ExceptionType {
     ILLEGAL_FILE_TYPE(40001004, "Illegal file type"),
     UNABLE_TO_WRITE_FILE(40001005, "Unable to write file"),
 
-
     USER_NOT_FOUND(40401001, "User not found"),
+    MOVIE_NOT_FOUND(40402001, "Movie not found"),
 
     USER_PASSWORD_NOT_MATCH(40001003, "Username or password is incorrect"),
     USER_NOT_ENABLED(50001001, "User not enabled"),

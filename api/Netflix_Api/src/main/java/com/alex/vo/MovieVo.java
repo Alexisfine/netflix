@@ -1,22 +1,20 @@
-package com.alex.model;
+package com.alex.vo;
 
 import com.alex.enums.MovieStatus;
-import jakarta.persistence.*;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
-@Entity
-@Table(name = "movie")
-@Data
-public class Movie extends AbstractEntity{
+import java.util.Date;
 
-    @Column(nullable = false)
+@Data
+public class MovieVo {
+    private String id;
+
     private String title;
 
     private String description;
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private MovieStatus movieStatus = MovieStatus.DRAFT;
+    private MovieStatus movieStatus;
 
     private String image;
 
@@ -35,4 +33,11 @@ public class Movie extends AbstractEntity{
     private String genre;
 
     private boolean isSeries;
+
+    @JsonFormat(pattern = "yyyyMMddHHmmss")
+    private Date createdAt;
+
+    @JsonFormat(pattern = "yyyyMMddHHmmss")
+    private Date updatedAt;
+
 }

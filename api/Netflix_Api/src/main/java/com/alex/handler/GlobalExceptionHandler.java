@@ -17,6 +17,7 @@ import static com.alex.exception.ExceptionType.*;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
     @ExceptionHandler(value = BizException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ErrorResponse bizExceptionHandler(BizException ex) {
         ErrorResponse errorResponse = new ErrorResponse();
         errorResponse.setCode(ex.getCode());
@@ -64,7 +65,6 @@ public class GlobalExceptionHandler {
         });
 
         ex.printStackTrace();
-
         return errorResponses;
     }
 }
