@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
-@Repository
+
 public interface UserDao extends JpaRepository<User, String> {
     Optional<User> getByUsername(String username);
 

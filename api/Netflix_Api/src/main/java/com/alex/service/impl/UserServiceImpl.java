@@ -11,9 +11,13 @@ import com.alex.service.UserService;
 import com.alex.upload.BucketName;
 import com.alex.utils.UpdateColumnUtils;
 import com.amazonaws.AmazonServiceException;
+import com.amazonaws.services.glacier.AmazonGlacierClient;
+import com.amazonaws.services.glacier.transfer.ArchiveTransferManager;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.S3Object;
+import com.amazonaws.services.s3.transfer.TransferManager;
+import com.amazonaws.services.s3.transfer.TransferManagerBuilder;
 import com.amazonaws.util.IOUtils;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
@@ -217,6 +221,10 @@ public class UserServiceImpl implements UserService {
             Optional<Map<String, String>> optionalMetaData,
             InputStream inputStream) {
 
+        TransferManager tm = TransferManagerBuilder.standard()
+                .withS3Client(amazonS3)
+                .build();
+
         ObjectMetadata metaData = new ObjectMetadata();
         optionalMetaData.ifPresent(map -> {
             if (!map.isEmpty()) {
@@ -224,7 +232,8 @@ public class UserServiceImpl implements UserService {
             }
         });
         try {
-            amazonS3.putObject(path, fileName, inputStream, metaData);
+            //amazonS3.putObject(path, fileName, inputStream, metaData);
+            tm.upload(path, fileName, inputStream, metaData);
         } catch (AmazonServiceException ex) {
             throw new IllegalStateException("Failed to store file to S3", ex);
         }
