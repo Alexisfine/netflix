@@ -17,6 +17,10 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.YearMonth;
+import java.util.List;
+import java.util.Map;
+
 @RestController
 @RequestMapping("/api/users")
 @CrossOrigin
@@ -37,7 +41,7 @@ public class UserController {
 
     @GetMapping
     @RolesAllowed("ADMIN")
-    Page<UserVo> search(@PageableDefault(sort = {"createdAt"}, direction = Sort.Direction.ASC) Pageable pageable){
+    public Page<UserVo> search(@PageableDefault(sort = {"createdAt"}, direction = Sort.Direction.ASC) Pageable pageable){
         Page<UserVo> users = userService
                 .search(pageable).map(userMapper::toVo);
         return users;
@@ -45,7 +49,7 @@ public class UserController {
 
     @PostMapping
     @RolesAllowed("ADMIN")
-    UserVo addUser(@Validated @RequestBody UserRegisterDto userRegisterDto) {
+    public UserVo addUser(@Validated @RequestBody UserRegisterDto userRegisterDto) {
         UserVo userVo = userMapper.toVo(userService.addUser(userRegisterDto));
         return userVo;
     }
@@ -57,23 +61,37 @@ public class UserController {
 
     @PutMapping("/{id}")
     @RolesAllowed("ADMIN")
-    UserVo updateUser(@PathVariable String id, @Validated @RequestBody UserUpdateDto userUpdateDto) {
+    public UserVo updateUser(@PathVariable String id, @Validated @RequestBody UserUpdateDto userUpdateDto) {
         return userMapper.toVo(userService.updateUser(id, userUpdateDto));
     }
 
     @DeleteMapping("/{id}")
     @RolesAllowed("ADMIN")
-    void deleteUser(@PathVariable String id) {
+    public void deleteUser(@PathVariable String id) {
         userService.deleteUser(id);
     }
 
+    @GetMapping("/data/monthly-new-users")
+    @RolesAllowed("ADMIN")
+    public Map<YearMonth, java.lang.Integer> findMonthlyNewUsers() {
+        Map<YearMonth, Integer> monthlyNewUsers = userService.getMonthlyNewUsers();
+        return monthlyNewUsers;
+    }
+
+    @GetMapping("/data/cumulative-total-users")
+    @RolesAllowed("ADMIN")
+    public Map<YearMonth, java.lang.Integer> findCumulativeTotalUsers() {
+        Map<YearMonth, Integer> cumulativeMonthlyUsers = userService.getCumulativeTotalUsers();
+        return cumulativeMonthlyUsers;
+    }
+
     @PostMapping("/register")
-    UserVo register(@Validated @RequestBody UserRegisterDto userRegisterDto) {
+    public UserVo register(@Validated @RequestBody UserRegisterDto userRegisterDto) {
         return userMapper.toVo(userService.register(userRegisterDto));
     }
 
     @PostMapping("/register/verify/email/{code}")
-    UserVo verifyEmail(@Validated @RequestBody UserRegisterDto userRegisterDto, @PathVariable("code") String code) {
+    public UserVo verifyEmail(@Validated @RequestBody UserRegisterDto userRegisterDto, @PathVariable("code") String code) {
         return userMapper.toVo(userService.verifyEmailInRegister(userRegisterDto, code));
     }
 

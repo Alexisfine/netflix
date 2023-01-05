@@ -5,8 +5,13 @@ import com.alex.dto.MovieUpdateDto;
 import com.alex.mapper.MovieMapper;
 import com.alex.service.MovieService;
 import com.alex.vo.MovieVo;
+import com.alex.vo.UserVo;
 import jakarta.annotation.security.RolesAllowed;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -39,6 +44,7 @@ public class MovieController {
         return movieMapper.toVo(movieService.updateMovie(id, movieUpdateDto));
     }
 
+    // TODO change to page after adding search filter
     @GetMapping
     @RolesAllowed("ADMIN")
     public List<MovieVo> getAllMovies() {
@@ -60,6 +66,28 @@ public class MovieController {
     @RolesAllowed("ADMIN")
     public void dropMovie(@PathVariable("id") String id) {
         movieService.drop(id);
+    }
+
+    // This method returns the movie if movie is published
+    @GetMapping("/find/{id}")
+    public MovieVo userGetMovieById(@PathVariable("id") String id) {
+        return movieMapper.toVo(movieService.userGetMovieById(id));
+    }
+
+    // TODO: Transfer to get featured (recommended movie) in future
+    @GetMapping("/find-random")
+    public MovieVo userGetRandomMovie(@RequestParam(name="type", required = false) String type) {
+        return movieMapper.toVo(movieService.getRandomMovie(type));
+    }
+
+    // TODO change to page after adding search filter
+    @GetMapping("/find-all")
+    public List<MovieVo> userFindAll() {
+        return movieService
+                .userFindAll()
+                .stream()
+                .map(movieDto -> movieMapper.toVo(movieDto))
+                .collect(Collectors.toList());
     }
 
 }

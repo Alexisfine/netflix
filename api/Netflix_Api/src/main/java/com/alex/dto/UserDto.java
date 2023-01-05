@@ -6,6 +6,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 
@@ -32,5 +33,5 @@ public class UserDto {
 
     private String lastLoginIp;
 
-    private Date lastLoginTime;
+    private LocalDateTime lastLoginTime;
 }

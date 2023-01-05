@@ -4,6 +4,7 @@ import com.alex.enums.MovieStatus;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Data
@@ -35,9 +36,9 @@ public class MovieVo {
     private boolean isSeries;
 
     @JsonFormat(pattern = "yyyyMMddHHmmss")
-    private Date createdAt;
+    private LocalDateTime createdAt;
 
     @JsonFormat(pattern = "yyyyMMddHHmmss")
-    private Date updatedAt;
+    private LocalDateTime updatedAt;
 
 }

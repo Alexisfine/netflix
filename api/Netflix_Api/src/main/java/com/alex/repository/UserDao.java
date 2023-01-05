@@ -18,4 +18,5 @@ public interface UserDao extends JpaRepository<User, String> {
 
     @Override
     Page<User> findAll(Pageable pageable);
+
 }

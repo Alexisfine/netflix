@@ -36,8 +36,11 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.io.InputStream;
+import java.time.YearMonth;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 import static com.alex.config.SecurityConfig.*;
 import static com.alex.exception.ExceptionType.*;
 import static org.apache.http.entity.ContentType.*;
@@ -137,6 +140,40 @@ public class UserServiceImpl implements UserService {
     @Override
     public Page<UserDto> search(Pageable pageable) {
         return userDao.findAll(pageable).map(user -> userMapper.toDto(user));
+    }
+
+    @Override
+    public Map<YearMonth, Integer> getMonthlyNewUsers() {
+        Map<YearMonth, Integer> monthlyNewUsers =
+                userDao
+                        .findAll()
+                        .stream()
+                        .collect(Collectors
+                                .groupingBy(
+                                        user ->
+                                                YearMonth.from(user.getCreatedAt()),
+                                                TreeMap::new,
+                                                Collectors.summingInt(user->1)));
+
+        return monthlyNewUsers;
+    }
+
+    @Override
+    public Map<YearMonth, Integer> getCumulativeTotalUsers() {
+        Map<YearMonth, Integer> monthlyNewUsers = getMonthlyNewUsers();
+        Map<YearMonth, Integer> monthlyTotalUsers = new TreeMap<>();
+
+        int totalUser = 0;
+        List<Integer> cumulativeUser = new LinkedList<>();
+        for (Integer value : monthlyNewUsers.values()) {
+            totalUser += value;
+            cumulativeUser.add(totalUser);
+        }
+        int index = 0;
+        for (YearMonth time: monthlyNewUsers.keySet()) {
+            monthlyTotalUsers.put(time, cumulativeUser.get(index++));
+        }
+        return monthlyTotalUsers;
     }
 
     @Override
@@ -250,6 +287,7 @@ public class UserServiceImpl implements UserService {
     public UserDto registerByPhone(SmsDto smsDto) {
         return null;
     }
+
 
     @Override
     public void sendSms(SmsDto smsDto) {

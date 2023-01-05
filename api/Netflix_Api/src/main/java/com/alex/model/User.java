@@ -7,7 +7,10 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.*;
+import java.util.List;
 
 @Entity(name = "User")
 @Table(
@@ -18,7 +21,7 @@ import java.util.*;
         }
 )
 @Data
-public class User extends AbstractEntity implements UserDetails {
+public class User extends AbstractEntity implements UserDetails{
     @Column(nullable = false)
     private String username;
 
@@ -35,7 +38,7 @@ public class User extends AbstractEntity implements UserDetails {
             name = "user_role",
             joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"))
-    private List<Role> roles;
+    private java.util.List<Role> roles;
 
     @Enumerated(EnumType.STRING)
     private Gender gender;
@@ -82,5 +85,7 @@ public class User extends AbstractEntity implements UserDetails {
     public boolean isEnabled() {
         return getEnabled();
     }
+
+
 
 }

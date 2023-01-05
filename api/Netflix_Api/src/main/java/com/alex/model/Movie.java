@@ -4,6 +4,9 @@ import com.alex.enums.MovieStatus;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Table(name = "movie")
 @Data
@@ -34,5 +37,13 @@ public class Movie extends AbstractEntity{
 
     private String genre;
 
-    private boolean isSeries;
+    private boolean isSeries = false;
+
+    @ManyToMany(
+            mappedBy = "content",
+            fetch = FetchType.LAZY
+    )
+    private List<com.alex.model.List> lists = new ArrayList<>();
+
+
 }

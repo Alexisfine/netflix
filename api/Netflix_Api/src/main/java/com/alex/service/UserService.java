@@ -8,8 +8,10 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.YearMonth;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 public interface UserService  extends UserDetailsService {
     List<UserDto> getAll();
@@ -44,4 +46,8 @@ public interface UserService  extends UserDetailsService {
     void sendSms(SmsDto smsDto);
 
     UserDto registerByPhone(SmsDto smsDto);
+
+    Map<YearMonth,Integer> getMonthlyNewUsers();
+
+    Map<YearMonth, Integer> getCumulativeTotalUsers();
 }

@@ -18,4 +18,10 @@ public interface MovieService {
     void publish(String id);
 
     void drop(String id);
+
+    MovieDto userGetMovieById(String id);
+
+    MovieDto getRandomMovie(String type);
+
+    List<MovieDto> userFindAll();
 }
