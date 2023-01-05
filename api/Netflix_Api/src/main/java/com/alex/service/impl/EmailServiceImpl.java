@@ -2,9 +2,7 @@ package com.alex.service.impl;
 
 import com.alex.dto.UserRegisterDto;
 import com.alex.exception.BizException;
-import com.alex.exception.ExceptionType;
 import com.alex.service.EmailService;
-import jakarta.mail.MessagingException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -12,7 +10,6 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
@@ -36,14 +33,13 @@ public class EmailServiceImpl implements EmailService {
     }
 
     @Override
-    @Transactional
     public void sendCode(String email) {
         try {
             // set up email
             log.info("Init email sending");
             SimpleMailMessage message = new SimpleMailMessage();
             message.setTo(email);
-            message.setFrom("admin@netflix.com");
+            message.setFrom(sendEmail);
             Random random = new Random();
             int code = random.nextInt(100000,999999);
             message.setSubject("Netflix Email Code: " + code);

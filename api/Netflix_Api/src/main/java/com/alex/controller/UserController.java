@@ -1,16 +1,10 @@
 package com.alex.controller;
 
-import com.alex.dto.UserDto;
-import com.alex.dto.UserLoginDto;
-import com.alex.dto.UserRegisterDto;
-import com.alex.dto.UserUpdateDto;
+import com.alex.dto.*;
 import com.alex.mapper.UserMapper;
 import com.alex.service.UserService;
 import com.alex.vo.UserVo;
-import com.amazonaws.AmazonServiceException;
 import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.model.ObjectMetadata;
-import com.electronwill.nightconfig.core.conversion.Path;
 import jakarta.annotation.security.RolesAllowed;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,16 +13,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.MediaType;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.io.InputStream;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/users")
@@ -85,10 +72,16 @@ public class UserController {
         return userMapper.toVo(userService.register(userRegisterDto));
     }
 
-    @PostMapping("/register/verify/{code}")
+    @PostMapping("/register/verify/email/{code}")
     UserVo verifyEmail(@Validated @RequestBody UserRegisterDto userRegisterDto, @PathVariable("code") String code) {
         return userMapper.toVo(userService.verifyEmailInRegister(userRegisterDto, code));
     }
+
+    // Developing
+//    @PostMapping("/register/phone")
+//    public UserVo registerByPhone(@Validated @RequestBody SmsDto smsDto) {
+//        return userMapper.toVo(userService.registerByPhone(smsDto));
+//    }
 
 
     @PostMapping(
@@ -110,4 +103,6 @@ public class UserController {
         System.out.println(userService.getCurrentUser());
         return userMapper.toVo(userService.getCurrentUser());
     }
+
+
 }

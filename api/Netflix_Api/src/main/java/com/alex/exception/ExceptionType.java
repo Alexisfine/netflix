@@ -18,7 +18,8 @@ public enum ExceptionType {
     VERIFICATION_CODE_EXPIRED(40001008, "Verification code expired"),
     VERIFICATION_CODE_INCORRECT(40001009, "Verification code incorrect"),
 
-    USERNAME_EMAIL_MISMATCH(4000110, "Username or email incorrect"),
+    USERNAME_EMAIL_MISMATCH(40001010, "Username or email incorrect"),
+    INVALID_PHONE_NUMBER(40001011, "Invalid phone number"),
     USER_NOT_FOUND(40401001, "User not found"),
     MOVIE_NOT_FOUND(40402001, "Movie not found"),
     USER_NOT_ENABLED(50001001, "User not enabled"),

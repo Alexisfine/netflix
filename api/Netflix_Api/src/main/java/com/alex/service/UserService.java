@@ -40,4 +40,8 @@ public interface UserService  extends UserDetailsService {
     UserDto register(UserRegisterDto userRegisterDto);
 
     UserDto verifyEmailInRegister(UserRegisterDto userRegisterDto, String code);
+
+    void sendSms(SmsDto smsDto);
+
+    UserDto registerByPhone(SmsDto smsDto);
 }

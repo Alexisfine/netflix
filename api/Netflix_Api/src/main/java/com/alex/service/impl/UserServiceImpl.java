@@ -8,6 +8,7 @@ import com.alex.model.User;
 import com.alex.repository.RoleDao;
 import com.alex.repository.UserDao;
 import com.alex.service.EmailService;
+import com.alex.service.SmsService;
 import com.alex.service.UserService;
 import com.alex.upload.BucketName;
 import com.alex.utils.UpdateColumnUtils;
@@ -55,6 +56,7 @@ public class UserServiceImpl implements UserService {
 
     private EmailService emailService;
     private EmailValidator emailValidator;
+    private SmsService smsService;
     @Autowired
     public UserServiceImpl(
             UserDao userDao,
@@ -63,7 +65,8 @@ public class UserServiceImpl implements UserService {
             RoleDao roleDao,
             AmazonS3 amazonS3,
             EmailValidator emailValidator,
-            EmailService emailService
+            EmailService emailService,
+            SmsService smsService
             ) {
         this.userDao = userDao;
         this.userMapper = userMapper;
@@ -72,6 +75,7 @@ public class UserServiceImpl implements UserService {
         this.amazonS3 = amazonS3;
         this.emailValidator = emailValidator;
         this.emailService = emailService;
+        this.smsService = smsService;
     }
 
     @Override
@@ -238,6 +242,20 @@ public class UserServiceImpl implements UserService {
         log.info("User is enabled");
         return userMapper.toDto(user);
     }
+
+
+
+    // Developing
+    @Override
+    public UserDto registerByPhone(SmsDto smsDto) {
+        return null;
+    }
+
+    @Override
+    public void sendSms(SmsDto smsDto) {
+        smsService.sendSms(smsDto);
+    }
+
 
 
     @Override
