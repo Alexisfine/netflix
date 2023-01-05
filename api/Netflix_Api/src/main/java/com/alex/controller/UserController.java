@@ -56,12 +56,10 @@ public class UserController {
         return users;
     }
 
-
     @PostMapping
     @RolesAllowed("ADMIN")
-    UserVo register(@Validated @RequestBody UserRegisterDto userRegisterDto) {
+    UserVo addUser(@Validated @RequestBody UserRegisterDto userRegisterDto) {
         UserVo userVo = userMapper.toVo(userService.addUser(userRegisterDto));
-        System.out.println(userVo);
         return userVo;
     }
 
@@ -76,18 +74,21 @@ public class UserController {
         return userMapper.toVo(userService.updateUser(id, userUpdateDto));
     }
 
-    @GetMapping("/me")
-    UserVo me() {
-        System.out.println(userService.getCurrentUser());
-        return userMapper.toVo(userService.getCurrentUser());
-    }
-
     @DeleteMapping("/{id}")
     @RolesAllowed("ADMIN")
     void deleteUser(@PathVariable String id) {
         userService.deleteUser(id);
     }
 
+    @PostMapping("/register")
+    UserVo register(@Validated @RequestBody UserRegisterDto userRegisterDto) {
+        return userMapper.toVo(userService.register(userRegisterDto));
+    }
+
+    @PostMapping("/register/verify/{code}")
+    UserVo verifyEmail(@Validated @RequestBody UserRegisterDto userRegisterDto, @PathVariable("code") String code) {
+        return userMapper.toVo(userService.verifyEmailInRegister(userRegisterDto, code));
+    }
 
 
     @PostMapping(
@@ -102,5 +103,11 @@ public class UserController {
     @GetMapping("/{id}/image/download")
     public byte[] downloadProfileImg(@PathVariable("id") String id) {
         return userService.downloadProfileImg(id);
+    }
+
+    @GetMapping("/me")
+    UserVo me() {
+        System.out.println(userService.getCurrentUser());
+        return userMapper.toVo(userService.getCurrentUser());
     }
 }

@@ -29,7 +29,9 @@ public class SecurityConfig {
     public static final Long EXPIRATION_TIME = 864000000L;
     public static final String TOKEN_PREFIX = "Bearer ";
     public static final String HEADER_STRING = "Authorization";
-    public static final String SIGN_UP_URL = "/api/users";
+    public static final String SIGN_UP_URL = "/api/users/register";
+
+    public static final String SIGN_UP_RELATED = "/api/users/register/**";
 
     public static final String TOKEN_URL = "/api/tokens";
 
@@ -52,7 +54,7 @@ public class SecurityConfig {
                 .exceptionHandling().authenticationEntryPoint(restAuthenticationEntryPoint)
                 .and()
                 .authorizeHttpRequests()
-                .requestMatchers(HttpMethod.POST, SIGN_UP_URL).permitAll()
+                .requestMatchers(HttpMethod.POST, SIGN_UP_URL, SIGN_UP_RELATED).permitAll()
                 .requestMatchers(HttpMethod.POST, TOKEN_URL).permitAll()
                 .anyRequest().authenticated()
                 .and()

@@ -7,12 +7,12 @@ import com.alex.model.Role;
 import com.alex.model.User;
 import com.alex.repository.RoleDao;
 import com.alex.repository.UserDao;
+import com.alex.service.EmailService;
 import com.alex.service.UserService;
 import com.alex.upload.BucketName;
 import com.alex.utils.UpdateColumnUtils;
+import com.alex.validation.EmailValidator;
 import com.amazonaws.AmazonServiceException;
-import com.amazonaws.services.glacier.AmazonGlacierClient;
-import com.amazonaws.services.glacier.transfer.ArchiveTransferManager;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.S3Object;
@@ -31,6 +31,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.io.InputStream;
@@ -52,21 +53,25 @@ public class UserServiceImpl implements UserService {
 
     private AmazonS3 amazonS3;
 
+    private EmailService emailService;
+    private EmailValidator emailValidator;
     @Autowired
     public UserServiceImpl(
             UserDao userDao,
             UserMapper userMapper,
             PasswordEncoder passwordEncoder,
             RoleDao roleDao,
-            AmazonS3 amazonS3
-            //AuthenticationManager authenticationManager
+            AmazonS3 amazonS3,
+            EmailValidator emailValidator,
+            EmailService emailService
             ) {
         this.userDao = userDao;
         this.userMapper = userMapper;
         this.passwordEncoder = passwordEncoder;
         this.roleDao = roleDao;
         this.amazonS3 = amazonS3;
-        //this.authenticationManager = authenticationManager;
+        this.emailValidator = emailValidator;
+        this.emailService = emailService;
     }
 
     @Override
@@ -90,6 +95,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDto addUser(UserRegisterDto userRegisterDto) {
         log.info("Begin adding user");
+        validateEmail(userRegisterDto.getEmail());
         checkUsernameAndEmail(userRegisterDto.getUsername(), userRegisterDto.getEmail());
         User user = userMapper.createEntity(userRegisterDto);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
@@ -98,7 +104,6 @@ public class UserServiceImpl implements UserService {
         User savedUser = userDao.save(user);
         log.info("user {} added", savedUser);
         UserDto userDto = userMapper.toDto(savedUser);
-        System.out.println(userDto);
         return userDto;
     }
 
@@ -110,6 +115,9 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto updateUser(String id, UserUpdateDto userUpdateDto) {
+        if (userUpdateDto.getEmail() != null) validateEmail(userUpdateDto.getEmail());
+        checkUsernameAndEmail(userUpdateDto.getUsername(), userUpdateDto.getEmail());
+
         User user = getUserPrivate(id);
         BeanUtils.copyProperties(userUpdateDto, user, UpdateColumnUtils.getNullPropertyNames(userUpdateDto));
         return userMapper.toDto(userDao.save(user));
@@ -195,6 +203,44 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
+    public UserDto register(UserRegisterDto userRegisterDto) {
+        log.info("Begin to register user");
+        validateEmail(userRegisterDto.getEmail());
+        log.info("Email format is passed");
+        checkUsernameAndEmail(userRegisterDto.getUsername(), userRegisterDto.getEmail());
+        log.info("Username and email are valid");
+        User user = userMapper.createEntity(userRegisterDto);
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        Role role = roleDao.findByName("ROLE_USER").get();
+        user.setRoles(List.of(role));
+        User savedUser = userDao.save(user);
+        log.info("user {} registered", savedUser);
+        emailService.sendCode(user.getEmail());
+        UserDto userDto = userMapper.toDto(savedUser);
+        return userDto;
+    }
+
+    @Override
+    @Transactional
+    public UserDto verifyEmailInRegister(UserRegisterDto userRegisterDto, String code) {
+        // verify user's email and username
+        User user = userDao
+                .getByEmail(userRegisterDto.getEmail())
+                .orElseThrow(() -> new BizException(USER_NOT_FOUND));
+        User user1 = userDao
+                .getByUsername(userRegisterDto.getUsername())
+                        .orElseThrow(() -> new BizException(USER_NOT_FOUND));
+        if (!user.getUsername().equals(user1.getUsername())) throw new BizException(USERNAME_EMAIL_MISMATCH);
+        emailService.verifyCode(userRegisterDto, code);
+        user.setEnabled(true);
+        userDao.save(user);
+        log.info("User is enabled");
+        return userMapper.toDto(user);
+    }
+
+
+    @Override
     public String login(UserLoginDto userLoginDto) {
         return null;
     }
@@ -246,5 +292,9 @@ public class UserServiceImpl implements UserService {
         } catch (AmazonServiceException | IOException ex ) {
             throw new BizException(FAILED_TO_DOWNLOAD);
         }
+    }
+
+    private void validateEmail(String email ) {
+        if (!emailValidator.test(email)) throw new BizException(INVALID_EMAIL_FORMAT);
     }
 }

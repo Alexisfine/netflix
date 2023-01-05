@@ -44,7 +44,7 @@ public class User extends AbstractEntity implements UserDetails {
     private Boolean locked = false;
 
     @Column(nullable = true)
-    private Boolean enabled = true;
+    private Boolean enabled = false;
 
     private String lastLoginIp;
 

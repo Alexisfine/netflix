@@ -36,4 +36,8 @@ public interface UserService  extends UserDetailsService {
     void uploadProfileImg(String id, MultipartFile file);
 
     byte[] downloadProfileImg(String id);
+
+    UserDto register(UserRegisterDto userRegisterDto);
+
+    UserDto verifyEmailInRegister(UserRegisterDto userRegisterDto, String code);
 }
