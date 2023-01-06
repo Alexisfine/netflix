@@ -1,12 +1,36 @@
 import { InfoOutlined, PlayArrow } from '@material-ui/icons'
-import React from 'react'
+import axios from 'axios';
+import React, { useEffect, useState } from 'react'
 import './Featured.scss'
 const Featured = ({type}) => {
+  const [content, setContent] = useState({});
+  const token = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ1c2VyNSIsImV4cCI6MTY3Mzg4MDgyNn0.Ke0g3I_jEF_oHTLYxf6T8_Ge1PsHnJfg27mHSCZh8qizMBwXtorZPNEW42tCXMqwm8B1YVIWEAVBPW9BjzduRg'
+  const config = {
+    headers : {Authorization:`Bearer ${token}`}
+  }
+  const defaultImage = "https://images.pexels.com/photos/6899260/pexels-photo-6899260.jpeg?auto=compress&cs=tinysrgb&dpr=2&w=500";
+  const defaultImageTitle = "https://occ-0-1432-1433.1.nflxso.net/dnm/api/v6/LmEnxtiAuzezXBjYXPuDgfZ4zZQ/AAAABUZdeG1DrMstq-YKHZ-dA-cx2uQN_YbCYx7RABDk0y7F8ZK6nzgCz4bp5qJVgMizPbVpIvXrd4xMBQAuNe0xmuW2WjoeGMDn1cFO.webp?r=df1";
+  const defaultDescription = "Lorem ipsum dolor sit amet consectetur adipisicing elit. Vitaeadipisci repellendus eum quasi illo, velit numquam, maxime temporasint deleniti, aliquid qui? Facilis, adipisci! Ratione hic repudiandaetemporibus eum earum?"
+  
+  useEffect(() => {
+    const getRandomContent = async () => {
+
+      try {
+        const res = await axios.get(`/movies/find-random
+        ${type ? '?type='+ (type === 'movies' ? 'false' : 'true') : ''}`, config)
+        setContent(res.data);
+        
+      } catch (err) {
+        console.log(err);
+      }
+    }
+    getRandomContent();
+  },[type])
   return (
     <div className='featured'>
         {type && (
             <div className="category">
-                <span>{type === 'movie' ? "Movies" : "Series"}</span>
+                <span>{type === 'movies' ? "Movies" : "Series"}</span>
                 <select name='genre' id='genre'>
                     <option>Genre</option>
                     <option value="adventure">Adventure</option>
@@ -26,19 +50,16 @@ const Featured = ({type}) => {
             </div>
         )}
         <img width='100%'
-        src="https://images.pexels.com/photos/6899260/pexels-photo-6899260.jpeg?auto=compress&cs=tinysrgb&dpr=2&w=500"
+        src={content.image ? content.image : defaultImage}
         alt=""
       />
       <div className="info">
       <img
-          src="https://occ-0-1432-1433.1.nflxso.net/dnm/api/v6/LmEnxtiAuzezXBjYXPuDgfZ4zZQ/AAAABUZdeG1DrMstq-YKHZ-dA-cx2uQN_YbCYx7RABDk0y7F8ZK6nzgCz4bp5qJVgMizPbVpIvXrd4xMBQAuNe0xmuW2WjoeGMDn1cFO.webp?r=df1"
+          src={content.imageTitle ? content.imageTitle : defaultImageTitle}
           alt=""
         />
         <p className="description">
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Vitae
-          adipisci repellendus eum quasi illo, velit numquam, maxime tempora
-          sint deleniti, aliquid qui? Facilis, adipisci! Ratione hic repudiandae
-          temporibus eum earum?
+          {content.description ? content.description : defaultDescription}
         </p>
         <div className="buttons">
             <button className="play">

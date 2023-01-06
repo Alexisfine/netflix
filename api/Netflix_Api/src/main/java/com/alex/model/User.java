@@ -2,7 +2,7 @@ package com.alex.model;
 
 import com.alex.enums.Gender;
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -20,7 +20,11 @@ import java.util.List;
                 @UniqueConstraint(name="user_table_email_uk", columnNames = "email")
         }
 )
-@Data
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class User extends AbstractEntity implements UserDetails{
     @Column(nullable = false)
     private String username;
