@@ -2,6 +2,8 @@ package com.alex.repository;
 
 import com.alex.enums.MovieStatus;
 import com.alex.model.Movie;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
@@ -14,4 +16,6 @@ public interface MovieDao extends JpaRepository<Movie, String> {
     List<Movie> findByMovieStatus(MovieStatus status);
 
     List<Movie> findByMovieStatusAndIsSeries(MovieStatus status, Boolean isSeries);
+
+    Page<Movie> findByMovieStatus(MovieStatus status, Pageable pageable);
 }

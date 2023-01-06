@@ -12,6 +12,8 @@ import com.alex.service.MovieService;
 import com.alex.utils.UpdateColumnUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -31,6 +33,17 @@ public class MovieServiceImpl implements MovieService {
     public MovieServiceImpl(MovieDao movieDao, MovieMapper movieMapper) {
         this.movieDao = movieDao;
         this.movieMapper = movieMapper;
+    }
+
+    @Override
+    public Page<MovieDto> search(Pageable pageable) {
+        return movieDao.findAll(pageable).map(movie -> movieMapper.toDto(movie));
+    }
+
+
+    @Override
+    public Page<MovieDto> userSearch(Pageable pageable) {
+        return movieDao.findByMovieStatus(PUBLISHED, pageable).map(movie -> movieMapper.toDto(movie));
     }
 
     @Override
@@ -104,6 +117,8 @@ public class MovieServiceImpl implements MovieService {
                 .map(movie -> movieMapper.toDto(movie))
                 .collect(Collectors.toList());
     }
+
+
 
     private Movie getMovie(String id) {
         return movieDao.findById(id).orElseThrow(() -> new BizException(MOVIE_NOT_FOUND));

@@ -44,15 +44,14 @@ public class MovieController {
         return movieMapper.toVo(movieService.updateMovie(id, movieUpdateDto));
     }
 
-    // TODO change to page after adding search filter
+    // TODO  add search filter
     @GetMapping
     @RolesAllowed("ADMIN")
-    public List<MovieVo> getAllMovies() {
+    public Page<MovieVo> getAllMovies(
+            @PageableDefault(sort = {"createdAt"}, direction = Sort.Direction.ASC) Pageable pageable) {
         return movieService
-                .getAllMovies()
-                .stream()
-                .map(movieDto -> movieMapper.toVo(movieDto))
-                .collect(Collectors.toList());
+                .search(pageable)
+                .map(movieDto -> movieMapper.toVo(movieDto));
     }
 
     // Make a movie public to users
@@ -80,14 +79,10 @@ public class MovieController {
         return movieMapper.toVo(movieService.getRandomMovie(type));
     }
 
-    // TODO change to page after adding search filter
+    // TODO add search filter params
     @GetMapping("/find-all")
-    public List<MovieVo> userFindAll() {
-        return movieService
-                .userFindAll()
-                .stream()
-                .map(movieDto -> movieMapper.toVo(movieDto))
-                .collect(Collectors.toList());
+    public Page<MovieVo> userSearch(@PageableDefault(sort = {"createdAt"}, direction = Sort.Direction.ASC) Pageable pageable) {
+        return movieService.userSearch(pageable).map(movieDto -> movieMapper.toVo(movieDto));
     }
 
 }
