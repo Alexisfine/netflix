@@ -1,6 +1,7 @@
 package com.alex.model;
 
 import com.alex.enums.MovieStatus;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -43,6 +44,7 @@ public class Movie extends AbstractEntity{
             mappedBy = "content",
             fetch = FetchType.LAZY
     )
+    @JsonIgnore
     private List<com.alex.model.List> lists = new ArrayList<>();
 
 

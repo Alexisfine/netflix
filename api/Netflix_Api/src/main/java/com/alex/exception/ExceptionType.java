@@ -20,8 +20,11 @@ public enum ExceptionType {
 
     USERNAME_EMAIL_MISMATCH(40001010, "Username or email incorrect"),
     INVALID_PHONE_NUMBER(40001011, "Invalid phone number"),
+    LIST_TITLE_DUPLiCATE(40003001, "List title duplicate"),
     USER_NOT_FOUND(40401001, "User not found"),
     MOVIE_NOT_FOUND(40402001, "Movie not found"),
+    LIST_NOT_FOUND(40402001, "List not found"),
+
     USER_NOT_ENABLED(50001001, "User not enabled"),
     USER_LOCKED(50001002, "User is locked"),
     FAILED_TO_DOWNLOAD(50001003, "Failed to download"),

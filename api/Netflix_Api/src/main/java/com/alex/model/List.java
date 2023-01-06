@@ -24,6 +24,7 @@ public class List extends AbstractEntity {
             inverseJoinColumns = @JoinColumn(name = "movie_id", referencedColumnName = "id"))
     private java.util.List<Movie> content = new ArrayList<>();
 
+
     public void addMovie(Movie movie) {
         content.add(movie);
         movie.getLists().add(this);
@@ -33,5 +34,7 @@ public class List extends AbstractEntity {
         content.remove(movie);
         movie.getLists().remove(this);
     }
+
+
 
 }
