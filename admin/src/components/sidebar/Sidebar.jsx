@@ -1,9 +1,19 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import './Sidebar.scss'
 import DashboardIcon from '@mui/icons-material/Dashboard'
 import { AccountCircleOutlined, CreditCard, DynamicForm, ExitToApp, InsertChart, LiveTv, LocalShipping, Notifications, PersonOutline, PsychologyOutlined, SettingsApplications, SettingsSystemDaydreamOutlined, SmartDisplay, Store, VideoLibrary } from '@mui/icons-material'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
+import { AuthContext } from '../../context/authContext/authContext'
+
 const Sidebar = () => {
+  const {loading, dispatch} = useContext(AuthContext);
+  const navigate = useNavigate();
+  const handleLogout = () => {
+    dispatch("LOGOUT");
+    localStorage.clear("netflixUser");
+    navigate('/login')
+
+  }
   return (
     <div className='sidebar'>
       <Link to='/' style={{textDecoration:'none'}}>
@@ -74,7 +84,7 @@ const Sidebar = () => {
             <AccountCircleOutlined className='icon'/>
             <span>Profile</span>
             </li>
-          <li>
+          <li onClick={handleLogout}>
             <ExitToApp className='icon'/>
             <span>Logout</span>
             </li>

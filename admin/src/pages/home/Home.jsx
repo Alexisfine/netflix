@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import './Home.scss';
 import Sidebar from '../../components/sidebar/Sidebar'
 import Navbar from '../../components/navbar/Navbar';
@@ -7,11 +7,12 @@ import FeaturedCharts from '../../components/featuredCharts/FeaturedCharts';
 import Charts from '../../components/charts/Charts';
 import Table from '../../components/table/Table';
 import axios from 'axios';
+import { AuthContext } from '../../context/authContext/authContext';
 
 const Home = () => {
-    const token = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbiIsImV4cCI6MTY3MzcxODIxOX0.GVhIpqNRl2q-ZZOU6Ipsi35QIQmu0gsoEEn5keEvtAu0WnB7rnlYcoOd7IxTrFYZ6K-_n3gGYHwI8R6JtlgLAg'
+  const {user} = useContext(AuthContext);
   const config = {
-    headers : {Authorization:`Bearer ${token}`}
+    headers : {Authorization:`Bearer ${user?.token}`}
   }
 
    const [usersStats, setUsersStats] = useState({});

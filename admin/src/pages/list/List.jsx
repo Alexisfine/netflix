@@ -1,5 +1,5 @@
 import axios from 'axios';
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { useLocation } from 'react-router-dom';
 import Datatable from '../../components/datatable/Datatable';
 import Navbar from '../../components/navbar/Navbar';
@@ -9,13 +9,14 @@ import UserDatatable from '../../components/userDatatable/UserDatatable'
 import ListDatatable from '../../components/ListDataTable/ListDatatable'
 
 import './List.scss';
+import { AuthContext } from '../../context/authContext/authContext';
 const List = () => {
   const location = useLocation();
   const type = location.pathname.split('/')[1];
-  const token = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbiIsImV4cCI6MTY3MzcxODIxOX0.GVhIpqNRl2q-ZZOU6Ipsi35QIQmu0gsoEEn5keEvtAu0WnB7rnlYcoOd7IxTrFYZ6K-_n3gGYHwI8R6JtlgLAg'
-    const config = {
-      headers : {Authorization:`Bearer ${token}`}
-    }
+   const {user} = useContext(AuthContext);
+  const config = {
+    headers : {Authorization:`Bearer ${user?.token}`}
+  }
 
   const [items, setItems] = useState({});
   useEffect(() => {

@@ -1,18 +1,20 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import './Widget.scss'
 import {AccountBalanceWalletOutlined, KeyboardArrowUp, MonetizationOnOutlined, Movie, PersonOutlined, ShoppingCartOutlined} from '@mui/icons-material'
 import { Link } from 'react-router-dom';
 import axios from 'axios';
+import { AuthContext } from '../../context/authContext/authContext';
 
 const Widget = ({type}) => {
     let data;
     const amount  = 800;
     const diff = 20;
 
-    const token = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbiIsImV4cCI6MTY3MzcxODIxOX0.GVhIpqNRl2q-ZZOU6Ipsi35QIQmu0gsoEEn5keEvtAu0WnB7rnlYcoOd7IxTrFYZ6K-_n3gGYHwI8R6JtlgLAg'
+    const {user} = useContext(AuthContext);
     const config = {
-      headers : {Authorization:`Bearer ${token}`}
+      headers : {Authorization:`Bearer ${user?.token}`}
     }
+ 
 
     const [totalUsers, setTotalUsers] = useState(0);
     useEffect(() => {
@@ -44,7 +46,7 @@ const Widget = ({type}) => {
             data = {
                 title: 'MOVIES',
                 isMoney: false,
-                link:"View all orders",
+                link:"View all movies",
                 amount: 1200,
                 icon: (<Movie  className='icon' style={{color:"green", backgroundColor: "rgba(0,128,0,0.2)"}}/>)
             };
