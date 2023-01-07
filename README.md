@@ -18,7 +18,7 @@ Netflix clone created using React and Springboot
 | PostgreSQL              | Relational Database         | https://www.postgresql.org                        |
 | MongoDB              | Nosql Database         | https://www.mongodb.com                        |
 | Redis              | In Memory Database         | http://redis.io                        |
-| H2 (Unit Testing)             | In Memory Database         | https://www.h2database.com/html/main.html                        |
+| H2 (Unit Testing)             | In Memory Database         | https://www.h2database.com                        |
 | Slf4j             | Logging        | https://www.slf4j.org           |
 | SpringBoot Validator             | Data Validation        | https://docs.spring.io/spring-framework/docs/3.2.x/spring-framework-reference/html/validation.html|
 | Hikari                | Database Connection Pool        | https://github.com/brettwooldridge/HikariCP               |
