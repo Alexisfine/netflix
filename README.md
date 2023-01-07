@@ -19,9 +19,9 @@ Netflix clone is an online movie streaming system. It includes a client side mov
 #### Client Platform
 ##### Client Home Page
 <img src="https://github.com/Alexisfine/netflix/blob/master/netflix_home.png" alt="drawing" width="500px"/>
-##### Client Sign In  Page
+ Client Sign In Page
 <img src="https://github.com/Alexisfine/netflix/blob/master/netflix_sign.png" alt="drawing" width="500px"/>
-##### Client Video Page
+ Client Video Page
 <img src="https://github.com/Alexisfine/netflix/blob/master/netflix_video.png" alt="drawing" width="500px"/>
 
 
