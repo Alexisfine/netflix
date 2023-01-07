@@ -1,9 +1,10 @@
 # netflix
-Netflix clone created using React and Springboot
-
 
 ## Description
-....
+Netflix clone is an online movie streaming system. It includes a client side movie streaming platform and an admin management platform. Netflix clone is created using React and Springboot. Movie streaming platform contains home page, movie recommendations, movie search lists, subscription, user profile, and login/register page. Admin management platform includes movie management, user management and user statistics. 
+
+## Project Snapshot
+
 
 ### Technologies 
 
@@ -41,3 +42,5 @@ Netflix clone created using React and Springboot
 | Recharts               | React Chart Library         | https://recharts.org                        |
 | Axios             | Frontend HTTP Framework        | https://github.com/axios/axios              |
 
+
+#### Development Progress
