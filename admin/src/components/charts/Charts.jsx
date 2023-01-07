@@ -9,17 +9,9 @@ import {
   ResponsiveContainer,
 } from "recharts";
 
-const data = [
-  { name: "January", Total: 1200 },
-  { name: "February", Total: 2100 },
-  { name: "March", Total: 800 },
-  { name: "April", Total: 1600 },
-  { name: "May", Total: 900 },
-  { name: "June", Total: 1700 },
-];
 
-const Charts = ({aspect, title}) => {
-  
+const Charts = ({aspect, title, data}) => {
+  console.log(data)
   return (
     <div className="chart">
       <div className="title">{title}</div>
@@ -36,12 +28,12 @@ const Charts = ({aspect, title}) => {
               <stop offset="95%" stopColor="#8884d8" stopOpacity={0} />
             </linearGradient>
           </defs>
-          <XAxis dataKey="name" stroke="gray" />
+          <XAxis dataKey="date" stroke="gray" />
           <CartesianGrid strokeDasharray="3 3" className="chartGrid" />
           <Tooltip />
           <Area
             type="monotone"
-            dataKey="Total"
+            dataKey="users"
             stroke="#8884d8"
             fillOpacity={1}
             fill="url(#total)"

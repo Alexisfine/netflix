@@ -3,7 +3,8 @@ import './Datatable.scss';
 import { DataGrid, GridColDef, GridValueGetterParams } from '@mui/x-data-grid';
 import {userColumns, userRows} from '../../datatablesource';
 import { Link } from 'react-router-dom';
-const Datatable = () => {
+const Datatable = ({type, items}) => {
+  console.log(items);
     const actionColumn = [{
         field: "action",
         headerName:"Action",
@@ -22,7 +23,7 @@ const Datatable = () => {
   return (
     <div className='datatable'>
       <div className="datatableTitle">
-        Add New User
+        Add new {type}
         <Link to='/users/new' className='link'>
         Add New
         </Link>

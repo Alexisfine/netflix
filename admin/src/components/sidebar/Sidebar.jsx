@@ -1,7 +1,7 @@
 import React from 'react'
 import './Sidebar.scss'
 import DashboardIcon from '@mui/icons-material/Dashboard'
-import { AccountCircleOutlined, CreditCard, ExitToApp, InsertChart, LocalShipping, Notifications, PersonOutline, PsychologyOutlined, SettingsApplications, SettingsSystemDaydreamOutlined, Store } from '@mui/icons-material'
+import { AccountCircleOutlined, CreditCard, DynamicForm, ExitToApp, InsertChart, LiveTv, LocalShipping, Notifications, PersonOutline, PsychologyOutlined, SettingsApplications, SettingsSystemDaydreamOutlined, SmartDisplay, Store, VideoLibrary } from '@mui/icons-material'
 import { Link } from 'react-router-dom'
 const Sidebar = () => {
   return (
@@ -26,20 +26,26 @@ const Sidebar = () => {
             <span>Users</span>
             </li>
             </Link>
-            <Link to='/products' style={{textDecoration:'none'}}>
+            <Link to='/movies' style={{textDecoration:'none'}}>
           <li>
-            <Store className='icon'/>
-            <span>Products</span>
+            <VideoLibrary className='icon'/>
+            <span>Movies</span>
             </li>
             </Link>
           <li>
-            <CreditCard className='icon'/>
-            <span>Orders</span>
+            <SmartDisplay className='icon'/>
+            <span>Documentaries</span>
             </li>
+            <li>
+            <LiveTv className='icon'/>
+            <span>TV Series</span>
+            </li>
+            <Link to='/lists' style={{textDecoration:'none'}}>
           <li>
-            <LocalShipping className='icon'/>
-            <span>Delivery</span>
+            <DynamicForm className='icon'/>
+            <span>Lists</span>
             </li>
+            </Link>
           <p className="title">USEFUL</p>
           <li>
             <InsertChart className='icon'/>
