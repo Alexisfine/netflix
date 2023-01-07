@@ -67,6 +67,12 @@ public class MovieController {
         movieService.drop(id);
     }
 
+    @DeleteMapping("/{id}")
+    @RolesAllowed("ADMIN")
+    public void deleteMovie(@PathVariable("id") String id) {
+        movieService.delete(id);
+    }
+
     // This method returns the movie if movie is published
     @GetMapping("/find/{id}")
     public MovieVo userGetMovieById(@PathVariable("id") String id) {

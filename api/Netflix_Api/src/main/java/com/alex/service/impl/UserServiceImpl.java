@@ -81,12 +81,13 @@ public class UserServiceImpl implements UserService {
         this.smsService = smsService;
     }
 
+    public static final String DEFAULT_PROFILE_IMG = "https://st3.depositphotos.com/9998432/13335/v/450/depositphotos_133352156-stock-illustration-default-placeholder-profile-icon.jpg";
+
     @Override
     public User loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = userDao
                 .getByUsername(username)
                 .orElseThrow(() -> new BizException(USER_NOT_FOUND));
-
         return user;
     }
 
@@ -106,6 +107,9 @@ public class UserServiceImpl implements UserService {
         checkUsernameAndEmail(userRegisterDto.getUsername(), userRegisterDto.getEmail());
         User user = userMapper.createEntity(userRegisterDto);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
+        user.setLocked(false);
+        user.setEnabled(true);
+        user.setProfilePic(DEFAULT_PROFILE_IMG);
         Role role = roleDao.findByName("ROLE_USER").get();
         user.setRoles(List.of(role));
         User savedUser = userDao.save(user);
@@ -177,6 +181,35 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public Long getTotalUsers() {
+        return userDao.count();
+    }
+
+    @Override
+    public String createAdminToken(TokenCreateDto tokenCreateDto) {
+        User user = loadUserByUsername(tokenCreateDto.getUsername());
+        if (!user.getRoles().contains(roleDao.findByName("ROLE_ADMIN").get())) throw new BizException(FORBIDDEN);
+
+        if (!passwordEncoder.matches(tokenCreateDto.getPassword(), user.getPassword())) {
+            throw new BizException(USER_PASSWORD_NOT_MATCH);
+        }
+
+        if (!user.isEnabled()) {
+            throw new BizException(USER_NOT_ENABLED);
+        }
+
+        if (!user.isAccountNonLocked()) {
+            throw new BizException(USER_LOCKED);
+        }
+
+        return JWT
+                .create()
+                .withSubject(user.getUsername())
+                .withExpiresAt(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
+                .sign(Algorithm.HMAC512(SECRET.getBytes()));
+    }
+
+    @Override
     public String createToken(TokenCreateDto tokenCreateDto) {
         User user = loadUserByUsername(tokenCreateDto.getUsername());
         if (!passwordEncoder.matches(tokenCreateDto.getPassword(), user.getPassword())) {
@@ -223,6 +256,8 @@ public class UserServiceImpl implements UserService {
 
         // Store image in s3 and upload db
         String path = String.format("%s/%s", BucketName.PROFILE_IMAGE.getBucketName(), user.getId());
+
+
         String fileName = String.format("%s-%s", file.getOriginalFilename(), UUID.randomUUID());
         try {
             save(path,fileName, Optional.of(metaData), file.getInputStream());
@@ -253,6 +288,8 @@ public class UserServiceImpl implements UserService {
         log.info("Username and email are valid");
         User user = userMapper.createEntity(userRegisterDto);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
+        user.setLocked(false);
+        user.setEnabled(false);
         Role role = roleDao.findByName("ROLE_USER").get();
         user.setRoles(List.of(role));
         User savedUser = userDao.save(user);

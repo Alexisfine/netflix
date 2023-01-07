@@ -11,7 +11,7 @@ const Sidebar = () => {
   const handleLogout = () => {
     dispatch("LOGOUT");
     localStorage.clear("netflixUser");
-    navigate('/login')
+    navigate(0);
 
   }
   return (

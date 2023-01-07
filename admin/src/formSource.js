@@ -74,3 +74,49 @@ export const userInputs = [
       placeholder: "in stock",
     },
   ];
+
+
+  export const movieInputs = [
+    {
+      id: 1,
+      label: "Title",
+      type: "text",
+      placeholder: "The Pale Blue Eye",
+    },
+    {
+      id: 2,
+      label: "Description",
+      type: "text",
+      placeholder: "Description",
+    },
+    {
+      id: 3,
+      label: "Year",
+      type: "text",
+      placeholder: "2023",
+    },
+    {
+      id: 4,
+      label: "Limit",
+      type: "text",
+      placeholder: "Limit",
+    },
+    {
+      id: 5,
+      label: "Genre",
+      type: "text",
+      placeholder: "Genre",
+    },
+    {
+      id: 6,
+      label: "Is Series",
+      type: "text",
+      placeholder: "Yes",
+    },
+    {
+      id: 7,
+      label: "Movie Status",
+      type: "text",
+      placeholder: "DRAFT",
+    },
+  ];

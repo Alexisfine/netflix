@@ -20,4 +20,5 @@ public interface UserMapper {
 
     User updateEntity(@MappingTarget User user, UserUpdateDto userUpdateDto);
 
+
 }

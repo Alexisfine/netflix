@@ -29,7 +29,7 @@ const List = () => {
       }
     }
     fetchItems();
-  },[items, type])
+  },[ type])
 
   return (
     <div className='list'>

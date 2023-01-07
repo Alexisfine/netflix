@@ -50,4 +50,8 @@ public interface UserService  extends UserDetailsService {
     Map<YearMonth,Integer> getMonthlyNewUsers();
 
     Map<YearMonth, Integer> getCumulativeTotalUsers();
+
+    Long getTotalUsers();
+
+    String createAdminToken(TokenCreateDto tokenCreateDto);
 }

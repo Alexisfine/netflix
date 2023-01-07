@@ -5,6 +5,8 @@ Netflix clone is an online movie streaming system. It includes a client side mov
 
 ## Project Snapshot
 
+![Alt text](s3://alex-netflix-image/admin_add.png "Title")
+
 
 ### Technologies 
 

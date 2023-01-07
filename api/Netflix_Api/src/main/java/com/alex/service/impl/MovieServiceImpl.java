@@ -40,6 +40,11 @@ public class MovieServiceImpl implements MovieService {
         return movieDao.findAll(pageable).map(movie -> movieMapper.toDto(movie));
     }
 
+    @Override
+    public void delete(String id) {
+        movieDao.deleteById(id);
+    }
+
 
     @Override
     public Page<MovieDto> userSearch(Pageable pageable) {

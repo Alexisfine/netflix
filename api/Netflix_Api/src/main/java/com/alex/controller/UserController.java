@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.YearMonth;
-import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -83,6 +82,12 @@ public class UserController {
     public Map<YearMonth, java.lang.Integer> findCumulativeTotalUsers() {
         Map<YearMonth, Integer> cumulativeMonthlyUsers = userService.getCumulativeTotalUsers();
         return cumulativeMonthlyUsers;
+    }
+
+    @GetMapping("/data/total-users")
+    @RolesAllowed("ADMIN")
+    public Long getTotalUsers() {
+        return userService.getTotalUsers();
     }
 
     @PostMapping("/register")

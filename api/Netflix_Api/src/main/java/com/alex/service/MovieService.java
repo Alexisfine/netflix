@@ -31,4 +31,6 @@ public interface MovieService {
     List<MovieDto> userFindAll();
 
     Page<MovieDto> search(Pageable pageable);
+
+    void delete(String id);
 }

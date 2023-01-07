@@ -1,13 +1,29 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import './MovieDatatable.scss'
 
 
 import { DataGrid, GridColDef, GridValueGetterParams } from '@mui/x-data-grid';
 import {userColumns} from '../../datatablesource';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import { AuthContext } from '../../context/authContext/authContext';
+
 
 const Datatable = ({type, items}) => {
-    console.log(items);
+  const navigate = useNavigate();
+  const {user} = useContext(AuthContext);
+  const config = {
+    headers : {Authorization:`Bearer ${user?.token}`}
+  }
+
+  const handleDelete = async (id) => {
+     try {
+        await axios.delete(`/movies/${id}`, config);
+        navigate(0);
+     } catch (err){
+        console.log(err);
+     }
+  }
     const column = [
         { field: "id", headerName: "ID", width: 150 },
         {
@@ -60,12 +76,12 @@ const Datatable = ({type, items}) => {
             field: "action",
             headerName:"Action",
             width: 200,
-            renderCell: () => {
+            renderCell: (params) => {
                 return (<div className='cellAction'>
                 <Link to='/users/123' style={{textDecoration:'none'}}>
                     <div className='viewButton'>Edit</div>
                     </Link>
-                    <div className='deleteButton'>Delete</div>
+                    <div className='deleteButton' onClick={() => handleDelete((params.row.id))}>Delete</div>
                 </div>)
             }
         }
@@ -75,7 +91,7 @@ const Datatable = ({type, items}) => {
     <div className='datatable'>
       <div className="datatableTitle">
         Add new {type}
-        <Link to='/users/new' className='link'>
+        <Link to='/movies/new' className='link'>
         Add New
         </Link>
       </div>
