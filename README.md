@@ -64,7 +64,7 @@ Netflix clone is an online movie streaming system. It includes a client side mov
 
 
 #### Development Progress
-Backend
+##### Backend
 <img src="https://github.com/Alexisfine/netflix/blob/master/backend_progress.png" alt="drawing" width="500px"/>
 Admin Management Platform
 <img src="https://github.com/Alexisfine/netflix/blob/master/admin_progress.png" alt="drawing" width="500px"/>
