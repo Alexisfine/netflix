@@ -34,6 +34,8 @@ public class SecurityConfig {
     public static final String SIGN_UP_RELATED = "/api/users/register/**";
 
     public static final String TOKEN_URL = "/api/tokens";
+    public static final String LOGIN_RELATED = "/api/tokens/**";
+
 
     private UserService userService;
     private RestAuthenticationEntryPoint restAuthenticationEntryPoint;
@@ -55,7 +57,7 @@ public class SecurityConfig {
                 .and()
                 .authorizeHttpRequests()
                 .requestMatchers(HttpMethod.POST, SIGN_UP_URL, SIGN_UP_RELATED).permitAll()
-                .requestMatchers(HttpMethod.POST, TOKEN_URL).permitAll()
+                .requestMatchers(HttpMethod.POST, TOKEN_URL, LOGIN_RELATED).permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .addFilter(new JwtAuthorizationFilter(

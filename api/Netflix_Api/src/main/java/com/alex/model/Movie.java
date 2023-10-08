@@ -3,14 +3,19 @@ package com.alex.model;
 import com.alex.enums.MovieStatus;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.*;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@Entity
+@Entity(name = "Movie")
 @Table(name = "movie")
-@Data
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@ToString
+@Builder
 public class Movie extends AbstractEntity{
 
     @Column(nullable = false)

@@ -54,10 +54,4 @@ public class RedisConfig implements CachingConfigurer {
         return new GenericJackson2JsonRedisSerializer();
     }
 
-
-
-
-
-
-
 }

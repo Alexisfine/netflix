@@ -24,6 +24,7 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString
 @Builder
 public class User extends AbstractEntity implements UserDetails{
     @Column(nullable = false)
