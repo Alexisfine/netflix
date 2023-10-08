@@ -5,7 +5,25 @@ Netflix clone is an online movie streaming system. It includes a client side mov
 
 ## Project Snapshot
 
-![Alt text](s3://alex-netflix-image/admin_add.png "Title")
+#### Admin Platform
+##### Admin Home Page
+<img src="https://raw.githubusercontent.com/Alexisfine/netflix/master/admin_home.png" alt="drawing" width="500px"/>
+
+##### Admin Movie Management Page
+<img src="https://raw.githubusercontent.com/Alexisfine/netflix/master/admin_list.png" alt="drawing" width="500px"/>
+
+##### Admin Add Movie Page
+<img src="https://raw.githubusercontent.com/Alexisfine/netflix/master/admin_add.png" alt="drawing" width="500px"/>
+
+
+#### Client Platform
+##### Client Home Page
+<img src="https://github.com/Alexisfine/netflix/blob/master/netflix_home.png" alt="drawing" width="500px"/>
+ Client Sign In Page
+<img src="https://github.com/Alexisfine/netflix/blob/master/netflix_sign.png" alt="drawing" width="500px"/>
+ Client Video Page
+<img src="https://github.com/Alexisfine/netflix/blob/master/netflix_video.png" alt="drawing" width="500px"/>
+
 
 
 ### Technologies 
@@ -46,3 +64,9 @@ Netflix clone is an online movie streaming system. It includes a client side mov
 
 
 #### Development Progress
+##### Backend
+<img src="https://github.com/Alexisfine/netflix/blob/master/backend_progress.png" alt="drawing" width="500px"/>
+Admin Management Platform
+<img src="https://github.com/Alexisfine/netflix/blob/master/admin_progress.png" alt="drawing" width="500px"/>
+Client Platform
+<img src="https://github.com/Alexisfine/netflix/blob/master/client_progress.png" alt="drawing" width="500px"/>
