@@ -1,6 +1,5 @@
 package com.alex.api;
 
-import com.github.pagehelper.PageInfo;
 import lombok.Data;
 import org.springframework.data.domain.Page;
 
